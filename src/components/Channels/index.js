@@ -42,7 +42,7 @@ export default ({
       <h2>{organisation.name}</h2>
       <ul>
         {channels.map(channel => (
-          <li>
+          <li key={channel.id}>
             <StyledAnchor
               isActive={channel.id === currentChannel.id}
               href="#"

@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import uuidv1 from "uuid/v1";
 
 import { Editor } from "slate-react";
-import { Value } from "slate";
+// import { Value } from "slate";
 import Plain from "slate-plain-serializer";
 
 const initialValue = Plain.deserialize("");

@@ -1,15 +1,15 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import "./App.css";
-import styled, { injectGlobal } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import colors from "./theme/colors";
 import Organisations from "./components/Organisations";
 import Channels from "./components/Channels";
 import Composer from "./components/Composer";
 import Message from "components/Message";
 import Header from "components/Header";
-import { isEmpty, isNil, first } from "lodash/fp";
+import { isEmpty, first } from "lodash/fp";
 
-injectGlobal`
+const GlobalStyles = createGlobalStyle`
 
   body, textarea, button {
     font-family: sans-serif;
@@ -114,61 +114,99 @@ const channels = {
   ]
 };
 
-class App extends Component {
-  state = {
-    org: first(orgs),
-    channel: first(channels[first(orgs).name])
-  };
+const AppFn = props => {
+  const defaultOrg = first(orgs);
+  const [currentOrg, setCurrentOrg] = useState(defaultOrg);
+  const [currentChannel, setCurrentChannel] = useState(
+    currentOrg.lastActiveChannel || first(channels[currentOrg.name])
+  );
 
-  handleChangeOrganisation = org => {
-    this.setState({
-      org,
-      channel: org.lastActiveChannel || first(channels[org.name])
-    });
-  };
+  const { messages } = currentChannel;
 
-  handleMessageSent = message => {
-    const channel = this.state.channel;
-    channel.messages.push(message);
-    this.setState({
-      channel
-    });
-  };
-
-  handleChangeChannel = channel => {
-    const org = this.state.org;
-    org.lastActiveChannel = channel;
-    this.setState({ org, channel });
-  };
-
-  render() {
-    const { messages } = this.state.channel;
-
-    return (
+  return (
+    <>
+      <GlobalStyles />
       <HBox>
         <Organisations
           orgs={orgs}
-          onChangeOrganisation={this.handleChangeOrganisation}
+          onChangeOrganisation={org => setCurrentOrg(org)}
         />
         <Channels
-          currentChannel={this.state.channel}
-          organisation={this.state.org}
-          channels={channels[this.state.org.name]}
-          onChangeChannel={this.handleChangeChannel}
+          currentChannel={currentChannel}
+          organisation={currentOrg}
+          channels={channels[currentOrg.name]}
+          onChangeChannel={chan => setCurrentChannel(chan)}
         />
         <VBox>
-          <Header channel={this.state.channel} />
+          <Header channel={currentChannel} />
           <Conversation>
             {messages.map(message => (
               <Message key={message.id} message={message} />
             ))}
             {isEmpty(messages) && <div>No messages yet</div>}
           </Conversation>
-          <Composer onMessageSent={this.handleMessageSent} />
+          <Composer onMessageSent={() => this.handleMessageSent} />
         </VBox>
       </HBox>
-    );
-  }
-}
+    </>
+  );
+};
 
-export default App;
+// class App extends Component {
+//   state = {
+//     org: first(orgs),
+//     channel: first(channels[first(orgs).name])
+//   };
+//
+//   handleChangeOrganisation = org => {
+//     this.setState({
+//       org,
+//       channel: org.lastActiveChannel || first(channels[org.name])
+//     });
+//   };
+//
+//   handleMessageSent = message => {
+//     const channel = this.state.channel;
+//     channel.messages.push(message);
+//     this.setState({
+//       channel
+//     });
+//   };
+//
+//   handleChangeChannel = channel => {
+//     const org = this.state.org;
+//     org.lastActiveChannel = channel;
+//     this.setState({ org, channel });
+//   };
+//
+//   render() {
+//     const { messages } = this.state.channel;
+//
+//     return (
+//       <HBox>
+//         <Organisations
+//           orgs={orgs}
+//           onChangeOrganisation={this.handleChangeOrganisation}
+//         />
+//         <Channels
+//           currentChannel={this.state.channel}
+//           organisation={this.state.org}
+//           channels={channels[this.state.org.name]}
+//           onChangeChannel={this.handleChangeChannel}
+//         />
+//         <VBox>
+//           <Header channel={this.state.channel} />
+//           <Conversation>
+//             {messages.map(message => (
+//               <Message key={message.id} message={message} />
+//             ))}
+//             {isEmpty(messages) && <div>No messages yet</div>}
+//           </Conversation>
+//           <Composer onMessageSent={this.handleMessageSent} />
+//         </VBox>
+//       </HBox>
+//     );
+//   }
+// }
+
+export default AppFn;

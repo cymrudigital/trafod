@@ -30,7 +30,7 @@ export default props => (
     <h3>{props.channel.name}</h3>
     <UserProfileButton>
       <h4>Judy McDonald</h4>
-      <Avatar src="https://d3iw72m71ie81c.cloudfront.net/female-75.jpg" />
+      <Avatar src="https://static.diverseui.com/female-70.jpg" />
     </UserProfileButton>
   </StyledHeader>
 );
