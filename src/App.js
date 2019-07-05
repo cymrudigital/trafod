@@ -5,9 +5,10 @@ import colors from "./theme/colors";
 import Organisations from "./components/Organisations";
 import Channels from "./components/Channels";
 import Composer from "./components/Composer";
-import Message from "components/Message";
-import Header from "components/Header";
+import Message from "./components/Message";
+import Header from "./components/Header";
 import { isEmpty, first } from "lodash/fp";
+import UserContext from "./context/UserContext";
 
 const GlobalStyles = createGlobalStyle`
 
@@ -115,6 +116,8 @@ const channels = {
 };
 
 const AppFn = props => {
+  const [user, setUser] = useState(null);
+
   const defaultOrg = first(orgs);
   const [currentOrg, setCurrentOrg] = useState(defaultOrg);
   const [currentChannel, setCurrentChannel] = useState(
@@ -123,31 +126,50 @@ const AppFn = props => {
 
   const { messages } = currentChannel;
 
+  function signIn() {
+    console.log("calling sign in");
+    setUser({
+      name: "Harry Potter",
+      avatar:
+        "https://pbs.twimg.com/profile_images/798267670881828865/u1Gp1L86.jpg"
+    });
+  }
+
   return (
     <>
-      <GlobalStyles />
-      <HBox>
-        <Organisations
-          orgs={orgs}
-          onChangeOrganisation={org => setCurrentOrg(org)}
-        />
-        <Channels
-          currentChannel={currentChannel}
-          organisation={currentOrg}
-          channels={channels[currentOrg.name]}
-          onChangeChannel={chan => setCurrentChannel(chan)}
-        />
-        <VBox>
-          <Header channel={currentChannel} />
-          <Conversation>
-            {messages.map(message => (
-              <Message key={message.id} message={message} />
-            ))}
-            {isEmpty(messages) && <div>No messages yet</div>}
-          </Conversation>
-          <Composer onMessageSent={() => this.handleMessageSent} />
-        </VBox>
-      </HBox>
+      <UserContext.Provider value={{ user, signIn }}>
+        <GlobalStyles />
+        <HBox>
+          <Organisations
+            orgs={orgs}
+            onChangeOrganisation={org => setCurrentOrg(org)}
+          />
+          <Channels
+            currentChannel={currentChannel}
+            organisation={currentOrg}
+            channels={channels[currentOrg.name]}
+            onChangeChannel={chan => setCurrentChannel(chan)}
+          />
+          <VBox>
+            <Header channel={currentChannel} />
+
+            <Conversation>
+              {messages.map(message => (
+                <Message key={message.id} message={message} />
+              ))}
+              {isEmpty(messages) && <div>No messages yet</div>}
+            </Conversation>
+            <Composer
+              onMessageSent={message => {
+                setCurrentChannel({
+                  ...currentChannel,
+                  messages: [...currentChannel.messages, message]
+                });
+              }}
+            />
+          </VBox>
+        </HBox>
+      </UserContext.Provider>
     </>
   );
 };

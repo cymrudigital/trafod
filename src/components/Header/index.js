@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import colors from "../../theme/colors";
+import UserContext from "../../context/UserContext";
 
 const StyledHeader = styled.div`
   background: ${colors.darkBlue};
@@ -25,12 +26,21 @@ const UserProfileButton = styled.div`
   align-items: center;
 `;
 
-export default props => (
-  <StyledHeader>
-    <h3>{props.channel.name}</h3>
-    <UserProfileButton>
-      <h4>Judy McDonald</h4>
-      <Avatar src="https://static.diverseui.com/female-70.jpg" />
-    </UserProfileButton>
-  </StyledHeader>
-);
+export default props => {
+  const { user, signIn } = useContext(UserContext);
+
+  return (
+    <StyledHeader>
+      <h3>{props.channel.name}</h3>
+      <UserProfileButton>
+        {user && (
+          <>
+            <h4>{user.name}</h4>
+            <Avatar src={user.avatar} />
+          </>
+        )}
+        {!user && <button onClick={() => signIn()}>Login</button>}
+      </UserProfileButton>
+    </StyledHeader>
+  );
+};
