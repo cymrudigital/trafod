@@ -1,9 +1,23 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { render, fireEvent, waitForDomChange } from "@testing-library/react";
 import App from "./App";
 
-it("renders without crashing", () => {
-  const div = document.createElement("div");
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
+describe("App", () => {
+  it("should allow signing in", async () => {
+    const { debug, getByTestId, getByText } = render(<App />);
+
+    const signInButton = await getByTestId("btn-sign-in");
+
+    fireEvent.click(signInButton);
+
+    await getByText("Harry Potter");
+
+    const signOutButton = await getByTestId("btn-sign-out");
+
+    fireEvent.click(signOutButton);
+
+    await getByText("Login");
+
+    debug();
+  });
 });

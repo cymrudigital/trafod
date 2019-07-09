@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@testing-library/react": "latest",
     "immutable": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "react-modal": "latest",
     "react-scripts": "latest",
     "react-tooltip": "latest",
     "readline": "latest",

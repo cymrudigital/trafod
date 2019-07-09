@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import colors from "../../theme/colors";
+import { light } from "../../theme/colors";
 import ReactTooltip from "react-tooltip";
 
 export const Organisation = styled.button`
   width: 3em;
   height: 3em;
-  border: 1px solid ${colors.white};
+  border: 1px solid ${light.textPrimary};
   border-radius: 8px;
   margin-bottom: 1em;
   display: flex;
@@ -21,10 +21,10 @@ export const Organisation = styled.button`
 `;
 
 const OrganisationList = styled.div`
-  background: ${colors.darkBlue};
+  background: ${light.primary};
   padding: 1em;
   height: calc(100vh - 2em);
-  color: ${colors.white};
+  color: ${light.textPrimary};
 
   ul {
     list-style: none;
@@ -34,7 +34,7 @@ const OrganisationList = styled.div`
     li {
       width: 4em;
       height: 4em;
-      border: 1px solid ${colors.white};
+      border: 1px solid ${light.textPrimary};
       border-radius: 8px;
       margin-bottom: 1em;
       display: flex;
@@ -52,7 +52,7 @@ const OrganisationList = styled.div`
   }
 `;
 
-const Organisations = ({ orgs, onChangeOrganisation }) => {
+const Organisations = ({ orgs, onChangeOrganisation, onAddOrgClicked }) => {
   return (
     <OrganisationList>
       {orgs.map(org => (
@@ -66,6 +66,13 @@ const Organisations = ({ orgs, onChangeOrganisation }) => {
         />
       ))}
       <ReactTooltip placer="right" effect="solid" />
+      <Organisation
+        type="button"
+        data-tip="Add organisation"
+        onClick={() => onAddOrgClicked()}
+      >
+        Add org
+      </Organisation>
     </OrganisationList>
   );
 };

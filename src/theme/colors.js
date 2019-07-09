@@ -1,7 +1,16 @@
-export default {
-  darkBlue: "#2c3e50",
-  lightBlue: "#34495e",
-  white: "#ccc",
+export const light = {
+  primary: "#2c3e50",
+  secondary: "#34495e",
+  textPrimary: "#ccc",
   link: "pink",
-  border: "#cecece"
-}
+  border: "#cecece",
+  textSecondary: "#ccc",
+  background: "#fff"
+};
+
+const dark = {};
+
+export default {
+  light,
+  dark
+};

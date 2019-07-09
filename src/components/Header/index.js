@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
-import colors from "../../theme/colors";
+import { light } from "../../theme/colors";
 import UserContext from "../../context/UserContext";
 
 const StyledHeader = styled.div`
-  background: ${colors.darkBlue};
-  color: ${colors.white};
+  background: ${light.primary};
+  color: ${light.textPrimary};
   padding: 0.5em 1em;
   display: flex;
   justify-content: space-between;
@@ -26,20 +26,37 @@ const UserProfileButton = styled.div`
   align-items: center;
 `;
 
+const InlineButton = styled.button`
+  display: flex;
+  flex-direction: row-reverse;
+  background: transparent;
+  color: ${light.textPrimary};
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  border: 0;
+`;
+
 export default props => {
-  const { user, signIn } = useContext(UserContext);
+  const { user, signIn, signOut } = useContext(UserContext);
 
   return (
     <StyledHeader>
       <h3>{props.channel.name}</h3>
+
       <UserProfileButton>
         {user && (
-          <>
+          <InlineButton onClick={signOut} data-testid="btn-sign-out">
             <h4>{user.name}</h4>
             <Avatar src={user.avatar} />
-          </>
+          </InlineButton>
         )}
-        {!user && <button onClick={() => signIn()}>Login</button>}
+        {!user && (
+          <InlineButton onClick={() => signIn()} data-testid="btn-sign-in">
+            <h4>Login</h4>
+          </InlineButton>
+        )}
       </UserProfileButton>
     </StyledHeader>
   );

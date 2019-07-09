@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import colors from "theme/colors";
+import { light } from "theme/colors";
 
 const Channels = styled.div`
-  background: ${colors.lightBlue};
-  color: ${colors.white};
+  background: ${light.secondary};
+  color: ${light.textSecondary};
   padding: 1em;
   width: calc((100vw / 20) * 2);
 
@@ -25,7 +25,7 @@ const Channels = styled.div`
 `;
 
 const StyledAnchor = styled.a`
-  color: ${colors.white};
+  color: ${light.textPrimary};
   text-decoration: none;
 
   ${props => props.isActive && `color: #fff`};
@@ -35,7 +35,8 @@ export default ({
   organisation,
   channels,
   onChangeChannel,
-  currentChannel
+  currentChannel,
+  children
 }) => {
   return (
     <Channels>
@@ -53,6 +54,7 @@ export default ({
           </li>
         ))}
       </ul>
+      {children}
     </Channels>
   );
 };

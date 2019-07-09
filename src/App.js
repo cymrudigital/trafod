@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-import styled, { createGlobalStyle } from "styled-components";
-import colors from "./theme/colors";
+import styled from "styled-components";
 import Organisations from "./components/Organisations";
 import Channels from "./components/Channels";
 import Composer from "./components/Composer";
@@ -9,24 +8,11 @@ import Message from "./components/Message";
 import Header from "./components/Header";
 import { isEmpty, first } from "lodash/fp";
 import UserContext from "./context/UserContext";
-
-const GlobalStyles = createGlobalStyle`
-
-  body, textarea, button {
-    font-family: sans-serif;
-    font-size: 16px;
-  }
-
-  a {
-    color: ${colors.white};
-    text-decoration: none;
-  }
-
-  a:focus {
-    outline: 0;
-    color: #fff;
-  }
-`;
+import { GlobalStyles } from "./GlobalStyles";
+import Modal from "react-modal";
+import CreateOrgModal from "./modal/CreateOrgModal";
+import { orgs, channels } from "./initialState";
+import CreateChannelModal from "./modal/CreateChannelModal";
 
 const HBox = styled.div`
   display: flex;
@@ -45,77 +31,10 @@ const VBox = styled.div`
   flex-direction: column;
 `;
 
-const orgs = [
-  {
-    id: 1,
-    name: "Org A",
-    backgroundImage: "https://vijayverma.co/uilogos/img/logomark/atica.png",
-    lastActiveChannel: null
-  },
-  {
-    id: 2,
-    name: "Org B",
-    backgroundImage: "https://vijayverma.co/uilogos/img/logomark/nira.png",
-    lastActiveChannel: null
-  },
-  {
-    id: 3,
-    name: "Org C",
-    backgroundImage: "https://vijayverma.co/uilogos/img/logomark/earth.png",
-    lastActiveChannel: null
-  }
-];
+const MODAL_CREATE_CHANNEL = "MODAL_CREATE_CHANNEL";
+const MODAL_CREATE_ORG = "MODAL_CREATE_ORG";
 
-const channels = {
-  "Org A": [
-    {
-      id: 1,
-      name: "Team A",
-      messages: []
-    },
-    {
-      id: 2,
-      name: "Team B",
-      messages: []
-    },
-    {
-      id: 3,
-      name: "Team C",
-      messages: []
-    }
-  ],
-  "Org B": [
-    {
-      id: 4,
-      name: "Team D",
-      messages: []
-    },
-    {
-      id: 5,
-      name: "Team E",
-      messages: []
-    }
-  ],
-  "Org C": [
-    {
-      id: 6,
-      name: "Team F",
-      messages: []
-    },
-    {
-      id: 7,
-      name: "Team G",
-      messages: []
-    },
-    {
-      id: 8,
-      name: "Team H",
-      messages: []
-    }
-  ]
-};
-
-const AppFn = props => {
+const App = props => {
   const [user, setUser] = useState(null);
 
   const defaultOrg = first(orgs);
@@ -124,7 +43,11 @@ const AppFn = props => {
     currentOrg.lastActiveChannel || first(channels[currentOrg.name])
   );
 
-  const { messages } = currentChannel;
+  const [openModalDialog, setOpenModalDialog] = useState(null);
+
+  function signOut() {
+    setUser(null);
+  }
 
   function signIn() {
     console.log("calling sign in");
@@ -135,100 +58,66 @@ const AppFn = props => {
     });
   }
 
+  function handleCreateOrg(e) {
+    e.preventDefault();
+    console.log(e);
+    setOpenModalDialog(null);
+  }
+
   return (
     <>
-      <UserContext.Provider value={{ user, signIn }}>
+      <UserContext.Provider value={{ user, signIn, signOut }}>
         <GlobalStyles />
         <HBox>
           <Organisations
             orgs={orgs}
             onChangeOrganisation={org => setCurrentOrg(org)}
+            onAddOrgClicked={() => setOpenModalDialog(MODAL_CREATE_ORG)}
           />
           <Channels
             currentChannel={currentChannel}
             organisation={currentOrg}
             channels={channels[currentOrg.name]}
             onChangeChannel={chan => setCurrentChannel(chan)}
-          />
+          >
+            <button onClick={() => setOpenModalDialog(MODAL_CREATE_CHANNEL)}>
+              Create organisation
+            </button>
+          </Channels>
           <VBox>
             <Header channel={currentChannel} />
 
             <Conversation>
-              {messages.map(message => (
+              {currentChannel.messages.map(message => (
                 <Message key={message.id} message={message} />
               ))}
-              {isEmpty(messages) && <div>No messages yet</div>}
+              {isEmpty(currentChannel.messages) && <div>No messages yet</div>}
             </Conversation>
+
             <Composer
               onMessageSent={message => {
-                setCurrentChannel({
-                  ...currentChannel,
-                  messages: [...currentChannel.messages, message]
-                });
+                currentChannel.messages.push(message);
               }}
             />
           </VBox>
         </HBox>
+        <Modal
+          isOpen={openModalDialog === MODAL_CREATE_ORG}
+          onRequestClose={() => setOpenModalDialog(null)}
+          shouldCloseOnOverlayClick={true}
+        >
+          <CreateOrgModal onSubmit={e => handleCreateOrg(e)} />
+        </Modal>
+        <Modal
+          isOpen={openModalDialog === MODAL_CREATE_CHANNEL}
+          shouldCloseOnOverlayClick={true}
+          onRequestClose={() => setOpenModalDialog(null)}
+        >
+          <CreateChannelModal onSubmit={e => handleCreateOrg(e)} />
+        </Modal>
       </UserContext.Provider>
     </>
   );
 };
 
-// class App extends Component {
-//   state = {
-//     org: first(orgs),
-//     channel: first(channels[first(orgs).name])
-//   };
-//
-//   handleChangeOrganisation = org => {
-//     this.setState({
-//       org,
-//       channel: org.lastActiveChannel || first(channels[org.name])
-//     });
-//   };
-//
-//   handleMessageSent = message => {
-//     const channel = this.state.channel;
-//     channel.messages.push(message);
-//     this.setState({
-//       channel
-//     });
-//   };
-//
-//   handleChangeChannel = channel => {
-//     const org = this.state.org;
-//     org.lastActiveChannel = channel;
-//     this.setState({ org, channel });
-//   };
-//
-//   render() {
-//     const { messages } = this.state.channel;
-//
-//     return (
-//       <HBox>
-//         <Organisations
-//           orgs={orgs}
-//           onChangeOrganisation={this.handleChangeOrganisation}
-//         />
-//         <Channels
-//           currentChannel={this.state.channel}
-//           organisation={this.state.org}
-//           channels={channels[this.state.org.name]}
-//           onChangeChannel={this.handleChangeChannel}
-//         />
-//         <VBox>
-//           <Header channel={this.state.channel} />
-//           <Conversation>
-//             {messages.map(message => (
-//               <Message key={message.id} message={message} />
-//             ))}
-//             {isEmpty(messages) && <div>No messages yet</div>}
-//           </Conversation>
-//           <Composer onMessageSent={this.handleMessageSent} />
-//         </VBox>
-//       </HBox>
-//     );
-//   }
-// }
-
-export default AppFn;
+export default App;
