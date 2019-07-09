@@ -81,7 +81,7 @@ const App = props => {
             onChangeChannel={chan => setCurrentChannel(chan)}
           >
             <button onClick={() => setOpenModalDialog(MODAL_CREATE_CHANNEL)}>
-              Create organisation
+              Create channel
             </button>
           </Channels>
           <VBox>
@@ -113,7 +113,7 @@ const App = props => {
           shouldCloseOnOverlayClick={true}
           onRequestClose={() => setOpenModalDialog(null)}
         >
-          <CreateChannelModal onSubmit={e => handleCreateOrg(e)} />
+          <CreateChannelModal onSubmit={() => setOpenModalDialog(null))} />
         </Modal>
       </UserContext.Provider>
     </>
