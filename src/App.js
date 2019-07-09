@@ -113,7 +113,7 @@ const App = props => {
           shouldCloseOnOverlayClick={true}
           onRequestClose={() => setOpenModalDialog(null)}
         >
-          <CreateChannelModal onSubmit={() => setOpenModalDialog(null))} />
+          <CreateChannelModal onSubmit={() => setOpenModalDialog(null)} />
         </Modal>
       </UserContext.Provider>
     </>
