@@ -16,6 +16,8 @@ import CreateChannelModal from "./modal/CreateChannelModal";
 
 const HBox = styled.div`
   display: flex;
+  flex-direction: row;
+  height: 100vh;
 `;
 
 const Conversation = styled.div`
@@ -68,6 +70,7 @@ const App = props => {
     <>
       <UserContext.Provider value={{ user, signIn, signOut }}>
         <GlobalStyles />
+
         <HBox>
           <Organisations
             orgs={orgs}
@@ -80,7 +83,10 @@ const App = props => {
             channels={channels[currentOrg.name]}
             onChangeChannel={chan => setCurrentChannel(chan)}
           >
-            <button onClick={() => setOpenModalDialog(MODAL_CREATE_CHANNEL)}>
+            <button
+              className="button is-link"
+              onClick={() => setOpenModalDialog(MODAL_CREATE_CHANNEL)}
+            >
               Create channel
             </button>
           </Channels>

@@ -10,6 +10,11 @@ const StyledHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  .title,
+  .subtitle {
+    color: ${light.textPrimary};
+  }
 `;
 
 const Avatar = styled.img`
@@ -38,13 +43,21 @@ const InlineButton = styled.button`
   border: 0;
 `;
 
-export default props => {
+const ChannelDetails = ({ name, purpose }) => (
+  <div>
+    <h3 className={"title is-4"}>{name}</h3>
+    <p className={"subtitle is-6"}>
+      {purpose || "Click to edit this channel's purpose"}
+    </p>
+  </div>
+);
+
+export default ({ channel }) => {
   const { user, signIn, signOut } = useContext(UserContext);
 
   return (
     <StyledHeader>
-      <h3>{props.channel.name}</h3>
-
+      <ChannelDetails name={channel.name} purpose={channel.purpose} />
       <UserProfileButton>
         {user && (
           <InlineButton onClick={signOut} data-testid="btn-sign-out">

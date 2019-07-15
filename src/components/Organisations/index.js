@@ -23,7 +23,6 @@ export const Organisation = styled.button`
 const OrganisationList = styled.div`
   background: ${light.primary};
   padding: 1em;
-  height: calc(100vh - 2em);
   color: ${light.textPrimary};
 
   ul {
@@ -68,10 +67,13 @@ const Organisations = ({ orgs, onChangeOrganisation, onAddOrgClicked }) => {
       <ReactTooltip placer="right" effect="solid" />
       <Organisation
         type="button"
+        className={"button"}
         data-tip="Add organisation"
         onClick={() => onAddOrgClicked()}
       >
-        Add org
+        <span className="icon is-small">
+          <i className="fas fa-plus"></i>
+        </span>
       </Organisation>
     </OrganisationList>
   );

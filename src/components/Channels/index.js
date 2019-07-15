@@ -6,7 +6,7 @@ const Channels = styled.div`
   background: ${light.secondary};
   color: ${light.textSecondary};
   padding: 1em;
-  width: calc((100vw / 20) * 2);
+  width: calc((100vw / 20) * 3);
 
   h2 {
     margin-top: 0;
