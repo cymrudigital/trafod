@@ -26,7 +26,7 @@ const StyledEditor = styled(Editor)`
   flex: 1;
 `;
 
-const Composer = ({ onMessageSent }) => {
+const Composer = ({ onMessageSent, inputRef }) => {
   const [value, setValue] = useState(initialValue);
   const { user } = useContext(UserContext);
 
@@ -48,6 +48,7 @@ const Composer = ({ onMessageSent }) => {
   return (
     <Wrapper>
       <StyledEditor
+        ref={inputRef}
         placeholder="Type your message here..."
         value={value}
         onChange={({ value: newValue }) => setValue(newValue)}
@@ -62,56 +63,5 @@ const Composer = ({ onMessageSent }) => {
     </Wrapper>
   );
 };
-// class Composer extends React.Component {
-//   static propTypes = {
-//     onMessageSent: PropTypes.func
-//   };
-
-//   state = {
-//     value: initialValue
-//   };
-
-//   handleChange = ({ value }) => {
-//     this.setState({
-//       value
-//     });
-//   };
-
-//   handleMessageSent = () => {
-//     const message = {
-//       id: uuidv1(),
-//       timestamp: Date.now(),
-//       text: Plain.serialize(this.state.value),
-//       author: "samiwel"
-//     };
-
-//     if (this.props.onMessageSent) {
-//       this.props.onMessageSent(message);
-//     }
-
-//     this.setState({
-//       value: initialValue
-//     });
-//   };
-
-//   render() {
-//     return (
-//       <Wrapper>
-//         <StyledEditor
-//           placeholder="Type your message here..."
-//           value={this.state.value}
-//           onChange={this.handleChange}
-//         />
-//         <SendButton
-//           type="button"
-//           onClick={this.handleMessageSent}
-//           disabled={!user}
-//         >
-//           Send
-//         </SendButton>
-//       </Wrapper>
-//     );
-//   }
-// }
 
 export default Composer;

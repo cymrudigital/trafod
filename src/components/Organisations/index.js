@@ -51,6 +51,19 @@ const OrganisationList = styled.div`
   }
 `;
 
+const AddOrgButton = ({ onClick }) => (
+  <Organisation
+    type="button"
+    className={"button"}
+    data-tip="Add organisation"
+    onClick={() => onClick()}
+  >
+    <span className="icon is-small">
+      <i className="fas fa-plus"></i>
+    </span>
+  </Organisation>
+);
+
 const Organisations = ({ orgs, onChangeOrganisation, onAddOrgClicked }) => {
   return (
     <OrganisationList>
@@ -65,16 +78,7 @@ const Organisations = ({ orgs, onChangeOrganisation, onAddOrgClicked }) => {
         />
       ))}
       <ReactTooltip placer="right" effect="solid" />
-      <Organisation
-        type="button"
-        className={"button"}
-        data-tip="Add organisation"
-        onClick={() => onAddOrgClicked()}
-      >
-        <span className="icon is-small">
-          <i className="fas fa-plus"></i>
-        </span>
-      </Organisation>
+      <AddOrgButton onClick={onAddOrgClicked} />
     </OrganisationList>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./App.css";
 import styled from "styled-components";
 import Organisations from "./components/Organisations";
@@ -13,6 +13,9 @@ import Modal from "react-modal";
 import CreateOrgModal from "./modal/CreateOrgModal";
 import { orgs, channels } from "./initialState";
 import CreateChannelModal from "./modal/CreateChannelModal";
+import Amplify from "aws-amplify";
+import awsconfig from "./aws-exports";
+Amplify.configure(awsconfig);
 
 const HBox = styled.div`
   display: flex;
@@ -36,7 +39,34 @@ const VBox = styled.div`
 const MODAL_CREATE_CHANNEL = "MODAL_CREATE_CHANNEL";
 const MODAL_CREATE_ORG = "MODAL_CREATE_ORG";
 
-const App = props => {
+const NoMessagesInChannel = ({ channelName, composerRef }) => (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100%"
+    }}
+  >
+    <p>
+      There are no messages in <strong>{channelName}</strong> yet.
+    </p>
+    <button
+      className="button"
+      type="button"
+      onClick={() => {
+        if (composerRef.current) {
+          composerRef.current.focus();
+        }
+      }}
+    >
+      Start the conversation
+    </button>
+  </div>
+);
+
+const App = () => {
   const [user, setUser] = useState(null);
 
   const defaultOrg = first(orgs);
@@ -47,12 +77,13 @@ const App = props => {
 
   const [openModalDialog, setOpenModalDialog] = useState(null);
 
+  const composerRef = useRef(null);
+
   function signOut() {
     setUser(null);
   }
 
   function signIn() {
-    console.log("calling sign in");
     setUser({
       name: "Harry Potter",
       avatar:
@@ -62,8 +93,23 @@ const App = props => {
 
   function handleCreateOrg(e) {
     e.preventDefault();
-    console.log(e);
     setOpenModalDialog(null);
+  }
+
+  function handleChangeOrg(org) {
+    setCurrentOrg(org);
+    console.log(currentOrg);
+
+    const nextChannel = org.lastActiveChannel || first(channels[org.name]);
+    setCurrentChannel(nextChannel);
+  }
+
+  function handleChannelChange(channel) {
+    setCurrentChannel(channel);
+    setCurrentOrg({
+      ...currentOrg,
+      lastActiveChannel: channel.name
+    });
   }
 
   return (
@@ -74,14 +120,14 @@ const App = props => {
         <HBox>
           <Organisations
             orgs={orgs}
-            onChangeOrganisation={org => setCurrentOrg(org)}
+            onChangeOrganisation={org => handleChangeOrg(org)}
             onAddOrgClicked={() => setOpenModalDialog(MODAL_CREATE_ORG)}
           />
           <Channels
             currentChannel={currentChannel}
             organisation={currentOrg}
             channels={channels[currentOrg.name]}
-            onChangeChannel={chan => setCurrentChannel(chan)}
+            onChangeChannel={chan => handleChannelChange(chan)}
           >
             <button
               className="button is-link"
@@ -97,13 +143,22 @@ const App = props => {
               {currentChannel.messages.map(message => (
                 <Message key={message.id} message={message} />
               ))}
-              {isEmpty(currentChannel.messages) && <div>No messages yet</div>}
+              {isEmpty(currentChannel.messages) && (
+                <NoMessagesInChannel
+                  channelName={currentChannel.name}
+                  composerRef={composerRef}
+                />
+              )}
             </Conversation>
 
             <Composer
               onMessageSent={message => {
-                currentChannel.messages.push(message);
+                setCurrentChannel({
+                  ...currentChannel,
+                  messages: [...currentChannel.messages, message]
+                });
               }}
+              inputRef={composerRef}
             />
           </VBox>
         </HBox>

@@ -4,7 +4,10 @@
   "private": true,
   "dependencies": {
     "@testing-library/react": "latest",
+    "aws-amplify": "^1.1.30",
+    "aws-amplify-react": "^2.3.10",
     "immutable": "latest",
+    "lodash": "^4.17.14",
     "react": "latest",
     "react-dom": "latest",
     "react-modal": "latest",
