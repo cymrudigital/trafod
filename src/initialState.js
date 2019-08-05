@@ -1,68 +1,77 @@
 export const orgs = [
   {
     id: 1,
-    name: "Org A",
+    name: "My Company",
     backgroundImage: "https://vijayverma.co/uilogos/img/logomark/atica.png",
-    lastActiveChannel: null
-  },
-  {
-    id: 2,
-    name: "Org B",
-    backgroundImage: "https://vijayverma.co/uilogos/img/logomark/nira.png",
-    lastActiveChannel: null
-  },
-  {
-    id: 3,
-    name: "Org C",
-    backgroundImage: "https://vijayverma.co/uilogos/img/logomark/earth.png",
     lastActiveChannel: null
   }
 ];
 export const channels = {
-  "Org A": [
+  1: [
     {
       id: 1,
-      name: "Team A",
-      messages: []
+      name: "Developers",
+      messages: [
+        {
+          author: 1,
+          id: "f0492751-6747-4840-b95e-421de9344fec",
+          text: "Meaningless",
+          timestamp: 1565018764717
+        },
+        {
+          author: 1,
+          id: "66e13c43-a0e7-40fb-8d33-0d5d3cf71332",
+          text: "This is super cool",
+          timestamp: 1565018795720
+        },
+        {
+          author: 1,
+          id: "c8d926a8-87a8-43d3-8827-3fb3bb8cf107",
+          text: "Wait, say what now?",
+          timestamp: 1565018824585
+        },
+        {
+          author: 1,
+          id: "bf6205b9-96d1-467d-a229-009e7eb6b9ae",
+          text: "😀",
+          timestamp: 1565018835287
+        },
+        {
+          author: 1,
+          id: "87847e3a-0093-4d82-848b-ad85fa386ca1",
+          text: "```\ncode\n```",
+          timestamp: 1565018858497
+        }
+      ]
     },
     {
       id: 2,
-      name: "Team B",
+      name: "Random",
       messages: []
     },
     {
       id: 3,
-      name: "Team C",
+      name: "News",
       messages: []
-    }
-  ],
-  "Org B": [
+    },
     {
       id: 4,
-      name: "Team D",
+      name: "HR",
       messages: []
     },
     {
       id: 5,
-      name: "Team E",
-      messages: []
-    }
-  ],
-  "Org C": [
-    {
-      id: 6,
-      name: "Team F",
-      messages: []
-    },
-    {
-      id: 7,
-      name: "Team G",
-      messages: []
-    },
-    {
-      id: 8,
-      name: "Team H",
+      name: "Training",
       messages: []
     }
   ]
+};
+
+export const users = {
+  1: {
+    id: 1,
+    name: "Harry Potter",
+    avatar:
+      "https://pbs.twimg.com/profile_images/798267670881828865/u1Gp1L86.jpg"
+  }
 };

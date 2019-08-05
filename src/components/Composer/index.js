@@ -1,12 +1,12 @@
 import React, { useState, useContext } from "react";
 import styled from "styled-components";
 import colors from "theme/colors";
-import uuidv1 from "uuid/v1";
 
 import { Editor } from "slate-react";
 // import { Value } from "slate";
 import Plain from "slate-plain-serializer";
 import UserContext from "../../context/UserContext";
+import { createMessage } from "../../model/message";
 
 const initialValue = Plain.deserialize("");
 
@@ -31,12 +31,10 @@ const Composer = ({ onMessageSent, inputRef }) => {
   const { user } = useContext(UserContext);
 
   function handleMessageSent(value, user) {
-    const message = {
-      id: uuidv1(),
-      timestamp: Date.now(),
-      text: Plain.serialize(value),
-      author: user.name
-    };
+    const message = createMessage({
+      author: user,
+      text: Plain.serialize(value)
+    });
 
     if (onMessageSent) {
       onMessageSent(message);

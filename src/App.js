@@ -11,7 +11,7 @@ import UserContext from "./context/UserContext";
 import { GlobalStyles } from "./GlobalStyles";
 import Modal from "react-modal";
 import CreateOrgModal from "./modal/CreateOrgModal";
-import { orgs, channels } from "./initialState";
+import { orgs, channels, users } from "./initialState";
 import CreateChannelModal from "./modal/CreateChannelModal";
 import Amplify from "aws-amplify";
 import awsconfig from "./aws-exports";
@@ -69,10 +69,9 @@ const NoMessagesInChannel = ({ channelName, composerRef }) => (
 const App = () => {
   const [user, setUser] = useState(null);
 
-  const defaultOrg = first(orgs);
-  const [currentOrg, setCurrentOrg] = useState(defaultOrg);
+  const [currentOrg, setCurrentOrg] = useState(first(orgs));
   const [currentChannel, setCurrentChannel] = useState(
-    currentOrg.lastActiveChannel || first(channels[currentOrg.name])
+    first(channels[currentOrg.id])
   );
 
   const [openModalDialog, setOpenModalDialog] = useState(null);
@@ -84,11 +83,7 @@ const App = () => {
   }
 
   function signIn() {
-    setUser({
-      name: "Harry Potter",
-      avatar:
-        "https://pbs.twimg.com/profile_images/798267670881828865/u1Gp1L86.jpg"
-    });
+    setUser(users[1]);
   }
 
   function handleCreateOrg(e) {
@@ -98,9 +93,8 @@ const App = () => {
 
   function handleChangeOrg(org) {
     setCurrentOrg(org);
-    console.log(currentOrg);
 
-    const nextChannel = org.lastActiveChannel || first(channels[org.name]);
+    const nextChannel = org.lastActiveChannel || first(channels[org.id]);
     setCurrentChannel(nextChannel);
   }
 
@@ -126,7 +120,7 @@ const App = () => {
           <Channels
             currentChannel={currentChannel}
             organisation={currentOrg}
-            channels={channels[currentOrg.name]}
+            channels={channels}
             onChangeChannel={chan => handleChannelChange(chan)}
           >
             <button

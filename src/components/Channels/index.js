@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { light } from "theme/colors";
 
@@ -31,6 +31,13 @@ const StyledAnchor = styled.a`
   ${props => props.isActive && `color: #fff`};
 `;
 
+const useCaseInsensitiveFilter = (prop = "name") => {
+  const [filter, setFilter] = useState("");
+  const applyFilter = obj =>
+    obj[prop].toUpperCase().includes(filter.toUpperCase());
+  return [filter, setFilter, applyFilter];
+};
+
 export default ({
   organisation,
   channels,
@@ -38,21 +45,44 @@ export default ({
   currentChannel,
   children
 }) => {
+  const [
+    channelNameFilter,
+    setChannelNameFilter,
+    applyChannelNameFilter
+  ] = useCaseInsensitiveFilter();
+
   return (
     <Channels>
       <h2>{organisation.name}</h2>
+      <span>
+        <input
+          type="text"
+          onChange={e => setChannelNameFilter(e.target.value)}
+          placeholder="Filter..."
+          value={channelNameFilter}
+        />
+        <button
+          onClick={() => {
+            setChannelNameFilter("");
+          }}
+        >
+          x
+        </button>
+      </span>
       <ul>
-        {channels.map(channel => (
-          <li key={channel.id}>
-            <StyledAnchor
-              isActive={channel.id === currentChannel.id}
-              href="#"
-              onClick={() => onChangeChannel(channel)}
-            >
-              {channel.name}
-            </StyledAnchor>
-          </li>
-        ))}
+        {channels[organisation.id]
+          .filter(applyChannelNameFilter)
+          .map(channel => (
+            <li key={channel.id}>
+              <StyledAnchor
+                isActive={channel.id === currentChannel.id}
+                href="#"
+                onClick={() => onChangeChannel(channel)}
+              >
+                {channel.name}
+              </StyledAnchor>
+            </li>
+          ))}
       </ul>
       {children}
     </Channels>
